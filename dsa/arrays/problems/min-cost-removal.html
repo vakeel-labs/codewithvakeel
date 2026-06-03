@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Min Cost Removal — Code with Vakeel</title>
+<link rel="stylesheet" href="../../../assets/css/style.css"/></head>
+<body>
+<nav class="nav"><a href="../../../index.html" class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.5">
+        <polyline points="2,10 5,5 8,8 11,3"/>
+        <circle cx="11" cy="3" r="1.2" fill="white" stroke="none"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name"><em>code</em> with Vakeel</div>
+      <div class="logo-tag">dev notes</div>
+    </div>
+  </a>
+  <div class="nav-div"></div><div class="nav-links"><a href="../../../index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5L8 2l6 4.5V14H2V6.5z"/><rect x="6" y="10" width="4" height="4"/></svg>Home<div class="dot"></div></a><a href="../../../dsa/index.html" class="nav-link active"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="4" height="9"/><rect x="6" y="2" width="4" height="12"/><rect x="11" y="7" width="4" height="7"/></svg>DSA<div class="dot"></div></a><a href="../../../system-design/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="4" rx="1"/><rect x="1" y="10" width="6" height="4" rx="1"/><rect x="9" y="10" width="6" height="4" rx="1"/><line x1="4" y1="6" x2="4" y2="10"/><line x1="12" y1="6" x2="12" y2="10"/><line x1="4" y1="8" x2="12" y2="8"/></svg>System Design<div class="dot"></div></a><a href="../../../genai/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="2" r="1.2"/><circle cx="8" cy="14" r="1.2"/><circle cx="2" cy="8" r="1.2"/><circle cx="14" cy="8" r="1.2"/></svg>Gen AI<div class="dot"></div></a></div></nav>
+<div class="app">
+<aside class="sidebar">
+  <div class="sg"><div class="sg-head">Arrays <span class="sg-arr">›</span></div><ul class="sg-items">
+    <li><a href="../../../dsa/arrays/index.html" class="si"><span class="si-ico">▦</span>Overview</a></li>
+    <li><a href="../../../dsa/arrays/sorting.html" class="si"><span class="si-ico">▦</span>Comparator &amp; Comparable</a></li>
+    <li><a href="../../../dsa/arrays/problems/noble-integer.html" class="si sub"><span class="si-ico">◆</span>Noble Integer<span class="si-badge new">NEW</span></a></li>
+    <li><a href="../../../dsa/arrays/problems/min-cost-removal.html" class="si sub active"><span class="si-ico">◆</span>Min Cost Removal<span class="si-badge new">NEW</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Strings <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Trees <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Graphs <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Dynamic Programming <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+</aside>
+<div class="main">
+<div class="content">
+  <div class="pg-head"><div class="breadcrumb"><a href="../../../index.html">Home</a><span>›</span><a href="../../index.html">DSA</a><span>›</span><a href="../index.html">Arrays</a><span>›</span><span>Min Cost Removal</span></div><div class="pg-meta"><span class="tag tag-i">Arrays</span><span class="tag tag-g">Greedy</span><span class="tag tag-a">Medium</span></div><h1 class="pg-title">Min Cost of Removing All Elements</h1><p class="pg-desc">Cost of removing A[i] = sum of all elements currently present. Find the order that minimises total cost.</p><div class="pg-badges"><span class="badge bdg-t">TC: O(N log N)</span><span class="badge bdg-s">SC: O(1)</span></div></div>
+  <h2 class="sh2" id="what">What is the cost?</h2>
+  <p class="body-text">When you remove an element, <strong style="color:var(--text)">cost = sum of ALL elements still present</strong> at that moment. Total = sum of all removal costs.</p>
+  <h2 class="sh2" id="example">Two Orders — A = [2, 4, 1]</h2>
+  <h3 class="sh3">Descending (4 → 2 → 1)</h3>
+  <div class="dryblock"><pre>Remove 4: [2,4,1] → cost = 7
+Remove 2: [2,1]   → cost = 3
+Remove 1: [1]     → cost = 1
+Total = 11  ← MINIMUM</pre></div>
+  <h3 class="sh3">Ascending (1 → 2 → 4)</h3>
+  <div class="dryblock"><pre>Remove 1: [2,4,1] → cost = 7
+Remove 2: [2,4]   → cost = 6
+Remove 4: [4]     → cost = 4
+Total = 17</pre></div>
+  <div class="callout info"><div class="callout-ico">💡</div><div class="callout-body">Removing in <strong>descending order</strong> always gives minimum cost.</div></div>
+  <h2 class="sh2" id="why">Why Descending?</h2>
+  <p class="body-text">After sorting descending, element at index <code>i</code> (0-based) is counted exactly <code>i+1</code> times. Larger elements removed first = counted fewer times.</p>
+  <div class="callout ok"><div class="callout-ico">✓</div><div class="callout-body"><strong>Formula:</strong> Total = Σ (i+1) × A[i] &nbsp; where A is sorted descending</div></div>
+  <h2 class="sh2" id="code">Code</h2>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Java</div></div><pre><code><span class='kw'>import</span> java.util.Arrays;
+<span class='kw'>import</span> java.util.Collections;
+
+<span class='kw'>public long</span> <span class='fn'>minCost</span>(<span class='kw'>int</span>[] A) {{
+    <span class='kw'>int</span> n = A.length;
+    Integer[] arr = <span class='kw'>new</span> Integer[n];
+    <span class='kw'>for</span> (<span class='kw'>int</span> i = <span class='nm'>0</span>; i &lt; n; i++) arr[i] = A[i];
+    Arrays.<span class='fn'>sort</span>(arr, Collections.<span class='fn'>reverseOrder</span>());
+    <span class='kw'>long</span> ans = <span class='nm'>0</span>;
+    <span class='kw'>for</span> (<span class='kw'>int</span> i = <span class='nm'>0</span>; i &lt; n; i++)
+        ans += (<span class='kw'>long</span>)(i + <span class='nm'>1</span>) * arr[i];
+    <span class='kw'>return</span> ans;
+}}</code></pre></div>
+  <h2 class="sh2" id="dryrun">Dry Run</h2>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Trace</div></div><pre><code>Sorted descending: [4, 2, 1]   index: 0, 1, 2</code></pre></div>
+  <div class="dryblock"><pre>i=0: (0+1) × 4 = 4
+i=1: (1+1) × 2 = 4
+i=2: (2+1) × 1 = 3
+
+Total = 11  ✓</pre></div>
+  <div class="pgnav"><a href="noble-integer.html"><div class="dir">← Previous</div><div class="ttl">Noble Integer</div></a><a href="../sorting.html" class="next"><div class="dir">Next →</div><div class="ttl">Comparator &amp; Comparable</div></a></div>
+</div>
+<aside class="toc"><div class="toc-lbl">On this page</div><ul class="toc-list"><li><a href="#what">What is the cost?</a></li><li><a href="#example">Two Orders</a></li><li><a href="#why">Why Descending?</a></li><li><a href="#code">Code</a></li><li><a href="#dryrun">Dry Run</a></li></ul></aside>
+</div>
+</div>
+<script src="../../../assets/js/main.js"></script>
+</body></html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Noble Integer — Code with Vakeel</title>
+<link rel="stylesheet" href="../../../assets/css/style.css"/></head>
+<body>
+<nav class="nav"><a href="../../../index.html" class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.5">
+        <polyline points="2,10 5,5 8,8 11,3"/>
+        <circle cx="11" cy="3" r="1.2" fill="white" stroke="none"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name"><em>code</em> with Vakeel</div>
+      <div class="logo-tag">dev notes</div>
+    </div>
+  </a>
+  <div class="nav-div"></div><div class="nav-links"><a href="../../../index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5L8 2l6 4.5V14H2V6.5z"/><rect x="6" y="10" width="4" height="4"/></svg>Home<div class="dot"></div></a><a href="../../../dsa/index.html" class="nav-link active"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="4" height="9"/><rect x="6" y="2" width="4" height="12"/><rect x="11" y="7" width="4" height="7"/></svg>DSA<div class="dot"></div></a><a href="../../../system-design/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="4" rx="1"/><rect x="1" y="10" width="6" height="4" rx="1"/><rect x="9" y="10" width="6" height="4" rx="1"/><line x1="4" y1="6" x2="4" y2="10"/><line x1="12" y1="6" x2="12" y2="10"/><line x1="4" y1="8" x2="12" y2="8"/></svg>System Design<div class="dot"></div></a><a href="../../../genai/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="2" r="1.2"/><circle cx="8" cy="14" r="1.2"/><circle cx="2" cy="8" r="1.2"/><circle cx="14" cy="8" r="1.2"/></svg>Gen AI<div class="dot"></div></a></div></nav>
+<div class="app">
+<aside class="sidebar">
+  <div class="sg"><div class="sg-head">Arrays <span class="sg-arr">›</span></div><ul class="sg-items">
+    <li><a href="../../../dsa/arrays/index.html" class="si"><span class="si-ico">▦</span>Overview</a></li>
+    <li><a href="../../../dsa/arrays/sorting.html" class="si"><span class="si-ico">▦</span>Comparator &amp; Comparable</a></li>
+    <li><a href="../../../dsa/arrays/problems/noble-integer.html" class="si sub active"><span class="si-ico">◆</span>Noble Integer<span class="si-badge new">NEW</span></a></li>
+    <li><a href="../../../dsa/arrays/problems/min-cost-removal.html" class="si sub"><span class="si-ico">◆</span>Min Cost Removal<span class="si-badge new">NEW</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Strings <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Trees <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Graphs <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Dynamic Programming <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+</aside>
+<div class="main">
+<div class="content">
+  <div class="pg-head"><div class="breadcrumb"><a href="../../../index.html">Home</a><span>›</span><a href="../../index.html">DSA</a><span>›</span><a href="../index.html">Arrays</a><span>›</span><span>Noble Integer</span></div><div class="pg-meta"><span class="tag tag-i">Arrays</span><span class="tag tag-b">Sorting</span><span class="tag tag-a">Medium</span></div><h1 class="pg-title">Noble Integer</h1><p class="pg-desc">Count elements where the number of elements <strong style="color:var(--text)">strictly less than A[i]</strong> equals <strong style="color:var(--text)">A[i]</strong>.</p><div class="pg-badges"><span class="badge bdg-t">Brute: O(N²)</span><span class="badge bdg-s">Optimal: O(N log N)</span><span class="badge bdg-d">Space: O(1)</span></div></div>
+  <h2 class="sh2" id="what">What is it?</h2>
+  <p class="body-text">An element <code>A[i]</code> is <strong style="color:var(--text)">Noble</strong> if count( x ∈ A where x &lt; A[i] ) == A[i].</p>
+  <div class="callout info"><div class="callout-ico">💡</div><div class="callout-body"><strong>Condition:</strong> count( x where x &lt; A[i] ) == A[i]</div></div>
+  <h2 class="sh2" id="example">Full Example</h2>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Input</div></div><pre><code>A = [1, -5, 3, 5, 5, -10, 4]     n = 7</code></pre></div>
+  <div class="dryblock"><pre>A[i]   Elements strictly &lt; A[i]               count   Noble?
+─────────────────────────────────────────────────────────────
+  1    {{-5, -10}}                             2       2==1?   NO
+ -5    {{-10}}                                 1       1==-5?  NO
+  3    {{1, -5, -10}}                          3       3==3?   YES ✓
+  5    {{1, -5, 3, -10, 4}}                    5       5==5?   YES ✓
+  5    {{1, -5, 3, -10, 4}}                    5       5==5?   YES ✓
+-10    {{}}                                    0       0==-10? NO
+  4    {{1, -5, 3, -10}}                       4       4==4?   YES ✓</pre></div>
+  <div class="callout ok"><div class="callout-ico">✓</div><div class="callout-body"><strong>Answer = 4.</strong> Noble elements: 3, 5, 5, 4</div></div>
+  <h2 class="sh2" id="obs">Key Observations</h2>
+  <ul class="body-list"><li><strong style="color:var(--text)">Negatives never Noble</strong> — count ≥ 0 always.</li><li><strong style="color:var(--text)">Large values can't be Noble</strong> — max count = n−1.</li><li><strong style="color:var(--text)">Duplicates share the same count</strong> — whole array, not position.</li></ul>
+  <div class="callout tip"><div class="callout-ico">→</div><div class="callout-body">Noble elements must have value between <strong>0 and n−1</strong>.</div></div>
+  <h2 class="sh2" id="brute">Brute Force — O(N²)</h2>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Java</div></div><pre><code><span class='kw'>public int</span> <span class='fn'>nobleIntegerBrute</span>(<span class='kw'>int</span>[] A) {{
+    <span class='kw'>int</span> ans = <span class='nm'>0</span>, n = A.length;
+    <span class='kw'>for</span> (<span class='kw'>int</span> i = <span class='nm'>0</span>; i &lt; n; i++) {{
+        <span class='kw'>int</span> count = <span class='nm'>0</span>;
+        <span class='kw'>for</span> (<span class='kw'>int</span> j = <span class='nm'>0</span>; j &lt; n; j++)
+            <span class='kw'>if</span> (A[j] &lt; A[i]) count++;
+        <span class='kw'>if</span> (count == A[i]) ans++;
+    }}
+    <span class='kw'>return</span> ans;
+}}</code></pre></div>
+  <h3 class="sh3">Dry run</h3>
+  <div class="dryblock"><pre>i=0  A[i]=1    count=2        2==1?   NO
+i=1  A[i]=-5   count=1        1==-5?  NO
+i=2  A[i]=3    count=3        3==3?   YES  ans=1
+i=3  A[i]=5    count=5        5==5?   YES  ans=2
+i=4  A[i]=5    count=5        5==5?   YES  ans=3
+i=5  A[i]=-10  count=0        0==-10? NO
+i=6  A[i]=4    count=4        4==4?   YES  ans=4
+ans = 4  ✓</pre></div>
+  <h2 class="sh2" id="optimal">Optimised — O(N log N)</h2>
+  <p class="body-text">After sorting ascending, element at index <code>i</code> has exactly <code>i</code> elements strictly smaller (no duplicates). Freeze <code>count</code> at first occurrence of each value:</p>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Key Logic</div></div><pre><code><span class='kw'>if</span> (i &gt; <span class='nm'>0</span> &amp;&amp; A[i] != A[i - <span class='nm'>1</span>]) count = i;  <span class='cm'>// update at new value</span>
+<span class='kw'>if</span> (count == A[i]) ans++;                        <span class='cm'>// check every element</span></code></pre></div>
+  <h2 class="sh2" id="dryrun">Dry Run — Optimised</h2>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Trace</div></div><pre><code>Sorted:  [ -10,  -5,   1,   3,   4,   5,   5 ]
+index:      0    1    2    3    4    5    6</code></pre></div>
+  <div class="dryblock"><pre>count=0, ans=0
+
+i=0  A=-10  i==0, no update     count=0  0==-10? NO
+i=1  A=-5   new → count=1       count=1  1==-5?  NO
+i=2  A=1    new → count=2       count=2  2==1?   NO
+i=3  A=3    new → count=3       count=3  3==3?   YES  ans=1
+i=4  A=4    new → count=4       count=4  4==4?   YES  ans=2
+i=5  A=5    new → count=5       count=5  5==5?   YES  ans=3
+i=6  A=5    SAME, no update     count=5  5==5?   YES  ans=4
+
+Final ans = 4  ✓</pre></div>
+  <h2 class="sh2" id="code">Final Code</h2>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Java</div></div><pre><code><span class='kw'>import</span> java.util.Arrays;
+
+<span class='kw'>public int</span> <span class='fn'>nobleInteger</span>(<span class='kw'>int</span>[] A) {{
+    Arrays.<span class='fn'>sort</span>(A);
+    <span class='kw'>int</span> n = A.length, ans = <span class='nm'>0</span>, count = <span class='nm'>0</span>;
+
+    <span class='kw'>for</span> (<span class='kw'>int</span> i = <span class='nm'>0</span>; i &lt; n; i++) {{
+        <span class='kw'>if</span> (i &gt; <span class='nm'>0</span> &amp;&amp; A[i] != A[i - <span class='nm'>1</span>])
+            count = i;     <span class='cm'>// freeze at first occurrence</span>
+        <span class='kw'>if</span> (count == A[i])
+            ans++;
+    }}
+    <span class='kw'>return</span> ans;
+}}</code></pre></div>
+  <div class="pg-badges" style="margin-bottom:12px"><span class="badge bdg-t">TC: O(N log N)</span><span class="badge bdg-s">SC: O(1)</span></div>
+  <div class="callout ok"><div class="callout-ico">✓</div><div class="callout-body"><strong>Key insight:</strong> Sort makes index = count of strictly smaller. Freeze count at first occurrence of each value.</div></div>
+  <h2 class="sh2" id="summary">Summary</h2>
+  <div class="tbl"><table><thead><tr><th>Approach</th><th>Time</th><th>Space</th><th>Idea</th></tr></thead><tbody><tr><td>Brute Force</td><td><code>O(N²)</code></td><td><code>O(1)</code></td><td>Nested loop</td></tr><tr><td>Optimised</td><td><code>O(N log N)</code></td><td><code>O(1)</code></td><td>Sort + index trick</td></tr></tbody></table></div>
+  <div class="pgnav"><a href="../sorting.html"><div class="dir">← Previous</div><div class="ttl">Comparator &amp; Comparable</div></a><a href="min-cost-removal.html" class="next"><div class="dir">Next →</div><div class="ttl">Min Cost Removal</div></a></div>
+</div>
+<aside class="toc"><div class="toc-lbl">On this page</div><ul class="toc-list"><li><a href="#what">What is it?</a></li><li><a href="#example">Full Example</a></li><li><a href="#obs">Key Observations</a></li><li><a href="#brute">Brute Force</a></li><li><a href="#optimal">Optimised</a></li><li><a href="#dryrun">Dry Run</a></li><li><a href="#code">Final Code</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+</div>
+</div>
+<script src="../../../assets/js/main.js"></script>
+</body></html>

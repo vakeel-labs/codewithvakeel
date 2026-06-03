@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Comparator & Comparable — Code with Vakeel</title>
+<link rel="stylesheet" href="../../assets/css/style.css"/></head>
+<body>
+<nav class="nav"><a href="../../index.html" class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.5">
+        <polyline points="2,10 5,5 8,8 11,3"/>
+        <circle cx="11" cy="3" r="1.2" fill="white" stroke="none"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name"><em>code</em> with Vakeel</div>
+      <div class="logo-tag">dev notes</div>
+    </div>
+  </a>
+  <div class="nav-div"></div><div class="nav-links"><a href="../../index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5L8 2l6 4.5V14H2V6.5z"/><rect x="6" y="10" width="4" height="4"/></svg>Home<div class="dot"></div></a><a href="../../dsa/index.html" class="nav-link active"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="4" height="9"/><rect x="6" y="2" width="4" height="12"/><rect x="11" y="7" width="4" height="7"/></svg>DSA<div class="dot"></div></a><a href="../../system-design/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="4" rx="1"/><rect x="1" y="10" width="6" height="4" rx="1"/><rect x="9" y="10" width="6" height="4" rx="1"/><line x1="4" y1="6" x2="4" y2="10"/><line x1="12" y1="6" x2="12" y2="10"/><line x1="4" y1="8" x2="12" y2="8"/></svg>System Design<div class="dot"></div></a><a href="../../genai/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="2" r="1.2"/><circle cx="8" cy="14" r="1.2"/><circle cx="2" cy="8" r="1.2"/><circle cx="14" cy="8" r="1.2"/></svg>Gen AI<div class="dot"></div></a></div></nav>
+<div class="app">
+<aside class="sidebar">
+  <div class="sg"><div class="sg-head">Arrays <span class="sg-arr">›</span></div><ul class="sg-items">
+    <li><a href="../../dsa/arrays/index.html" class="si"><span class="si-ico">▦</span>Overview</a></li>
+    <li><a href="../../dsa/arrays/sorting.html" class="si active"><span class="si-ico">▦</span>Comparator &amp; Comparable</a></li>
+    <li><a href="../../dsa/arrays/problems/noble-integer.html" class="si sub"><span class="si-ico">◆</span>Noble Integer<span class="si-badge new">NEW</span></a></li>
+    <li><a href="../../dsa/arrays/problems/min-cost-removal.html" class="si sub"><span class="si-ico">◆</span>Min Cost Removal<span class="si-badge new">NEW</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Strings <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Trees <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Graphs <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+  <div class="sg"><div class="sg-head">Dynamic Programming <span class="sg-arr">›</span></div><ul class="sg-items"><li><a href="#" class="si"><span class="si-ico">▦</span>Overview<span class="si-badge soon">SOON</span></a></li></ul></div>
+</aside>
+<div class="main">
+<div class="content">
+  <div class="pg-head"><div class="breadcrumb"><a href="../../index.html">Home</a><span>›</span><a href="../index.html">DSA</a><span>›</span><a href="index.html">Arrays</a><span>›</span><span>Comparator &amp; Comparable</span></div><div class="pg-meta"><span class="tag tag-i">Arrays</span><span class="tag tag-b">Sorting</span></div><h1 class="pg-title">Comparator &amp; Comparable</h1><p class="pg-desc">Custom sort logic in Java — intuition-first. How to write any comparator from first principles.</p></div>
+  <h2 class="sh2" id="rule">The ONE Rule</h2>
+  <p class="body-text"><code>compare(a, b)</code> answers: <em>should a come before b?</em></p>
+  <div class="callout info"><div class="callout-ico">💡</div><div class="callout-body"><strong>negative</strong> → a before b &nbsp;|&nbsp; <strong>zero</strong> → same &nbsp;|&nbsp; <strong>positive</strong> → b before a</div></div>
+  <h3 class="sh3">Process — English first, code second</h3>
+  <ol class="body-list"><li>Say what "a before b" means in plain English</li><li>Express that as math</li><li>Return negative when true</li></ol>
+  <h2 class="sh2" id="patterns">Common Patterns</h2>
+  <h3 class="sh3">Ascending</h3>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Java</div></div><pre><code>Collections.<span class='fn'>sort</span>(list, (a, b) -> Integer.<span class='fn'>compare</span>(a, b));</code></pre></div>
+  <div class="callout warn"><div class="callout-ico">⚠</div><div class="callout-body">Never use <code>a - b</code> directly — integer overflow. Always <code>Integer.compare(a, b)</code>.</div></div>
+  <h3 class="sh3">Descending</h3>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Java</div></div><pre><code>Collections.<span class='fn'>sort</span>(list, (a, b) -> Integer.<span class='fn'>compare</span>(b, a));</code></pre></div>
+  <h3 class="sh3">Sort by absolute value</h3>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Java</div></div><pre><code><span class='cm'>// [-10, 6, 2, -6, 1, 10] → [1, 2, 6, -6, -10, 10]</span>
+Collections.<span class='fn'>sort</span>(list, (a, b) -> Integer.<span class='fn'>compare</span>(Math.<span class='fn'>abs</span>(a), Math.<span class='fn'>abs</span>(b)));</code></pre></div>
+  <div class="dryblock"><pre>a=5,  b=10  |5|-|10|  = -5 &lt; 0  → 5 before 10  ✓
+a=-6, b=2   |-6|-|2|  =  4 &gt; 0  → 2 before -6  ✓
+a=-6, b=6   |-6|-|6|  =  0      → same          ✓</pre></div>
+  <h2 class="sh2" id="multikey">Multi-key Sorting</h2>
+  <div class="codeblock"><div class="cb-head"><div class="cb-dots"><div class="cb-dot" style="background:#FF5F57"></div><div class="cb-dot" style="background:#FFBD2E"></div><div class="cb-dot" style="background:#28C840"></div></div><div class="cb-lang">Java</div></div><pre><code>Collections.<span class='fn'>sort</span>(list, (a, b) -> {{
+    <span class='kw'>int</span> cmp = a.name.<span class='fn'>compareTo</span>(b.name);
+    <span class='kw'>if</span> (cmp != <span class='nm'>0</span>) <span class='kw'>return</span> cmp;
+    <span class='kw'>return</span> Integer.<span class='fn'>compare</span>(a.age, b.age);
+}});</code></pre></div>
+  <h2 class="sh2" id="cmp">Comparable vs Comparator</h2>
+  <div class="tbl"><table><thead><tr><th>Feature</th><th>Comparable</th><th>Comparator</th></tr></thead><tbody><tr><td>Logic lives</td><td>Inside class</td><td>Outside class</td></tr><tr><td>Method</td><td><code>compareTo(other)</code></td><td><code>compare(a, b)</code></td></tr><tr><td>Orderings</td><td>Only ONE</td><td>As many as you want</td></tr><tr><td>Modify class?</td><td>YES</td><td>NO</td></tr></tbody></table></div>
+  <div class="callout ok"><div class="callout-ico">✓</div><div class="callout-body">One natural order → <strong>Comparable</strong>. Multiple orderings or can't modify class → <strong>Comparator</strong>.</div></div>
+  <div class="pgnav"><a href="problems/min-cost-removal.html"><div class="dir">← Previous</div><div class="ttl">Min Cost Removal</div></a><a href="problems/noble-integer.html" class="next"><div class="dir">Next →</div><div class="ttl">Noble Integer</div></a></div>
+</div>
+<aside class="toc"><div class="toc-lbl">On this page</div><ul class="toc-list"><li><a href="#rule">The ONE Rule</a></li><li><a href="#patterns">Common Patterns</a></li><li><a href="#multikey">Multi-key</a></li><li><a href="#cmp">Comparable vs Comparator</a></li></ul></aside>
+</div>
+</div>
+<script src="../../assets/js/main.js"></script>
+</body></html>

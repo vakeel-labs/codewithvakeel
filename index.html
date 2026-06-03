@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Code with Vakeel — DSA · System Design · Gen AI</title>
+<link rel="stylesheet" href="assets/css/style.css"/>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.5">
+        <polyline points="2,10 5,5 8,8 11,3"/>
+        <circle cx="11" cy="3" r="1.2" fill="white" stroke="none"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name"><em>code</em> with Vakeel</div>
+      <div class="logo-tag">dev notes</div>
+    </div>
+  </a>
+  <div class="nav-div"></div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link active">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5L8 2l6 4.5V14H2V6.5z"/><rect x="6" y="10" width="4" height="4"/></svg>
+      Home <div class="dot"></div>
+    </a>
+    <a href="dsa/index.html" class="nav-link">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="4" height="9"/><rect x="6" y="2" width="4" height="12"/><rect x="11" y="7" width="4" height="7"/></svg>
+      DSA <div class="dot"></div>
+    </a>
+    <a href="system-design/index.html" class="nav-link">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="4" rx="1"/><rect x="1" y="10" width="6" height="4" rx="1"/><rect x="9" y="10" width="6" height="4" rx="1"/><line x1="4" y1="6" x2="4" y2="10"/><line x1="12" y1="6" x2="12" y2="10"/><line x1="4" y1="8" x2="12" y2="8"/></svg>
+      System Design <div class="dot"></div>
+    </a>
+    <a href="genai/index.html" class="nav-link">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="2" r="1.2"/><circle cx="8" cy="14" r="1.2"/><circle cx="2" cy="8" r="1.2"/><circle cx="14" cy="8" r="1.2"/><line x1="5.5" y1="3.8" x2="3.8" y2="5.5"/><line x1="10.5" y1="12.2" x2="12.2" y2="10.5"/></svg>
+      Gen AI <div class="dot"></div>
+    </a>
+  </div>
+  <button class="theme-btn" title="Switch to dark">🌙</button>
+</nav>
+
+<div class="app" style="padding-top:var(--nav-h)">
+<div class="home-wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-l">
+      <div class="hero-pill">Learning in public</div>
+      <h1 class="hero-h1">
+        Master DSA,<br>
+        <span class="grad">System Design</span><br>
+        & Gen AI.
+      </h1>
+      <p class="hero-p">Precision notes for developers. Every concept explained with intuition first, code second, and dry runs that make it stick.</p>
+      <div class="hero-btns">
+        <a href="dsa/index.html" class="btn-p">Start with DSA →</a>
+        <a href="system-design/index.html" class="btn-g">System Design</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-n">12<em>+</em></div><div class="stat-l">Topics covered</div></div>
+        <div><div class="stat-n">3<em>+</em></div><div class="stat-l">Problem walkthroughs</div></div>
+        <div><div class="stat-n">∞</div><div class="stat-l">Always growing</div></div>
+      </div>
+    </div>
+    <div class="hero-r">
+      <canvas id="hero-canvas"></canvas>
+      <div class="canvas-bar">
+        <div class="cb-live"><div class="cb-live-dot"></div><div class="cb-text" style="color:var(--green)">LIVE</div></div>
+        <div class="cb-sep"></div>
+        <div class="cb-text" id="cb-rps">0 req/s</div>
+        <div class="cb-sep"></div>
+        <div class="cb-text">lat: <span id="cb-lat">—</span></div>
+        <div class="cb-pill" id="cb-scene-label">INFRA · DATA PIPELINE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <div class="home-body">
+    <div class="sec-row" style="margin-bottom:14px">
+      <div class="sec-lbl">Topics</div>
+    </div>
+    <div class="topic-grid">
+      <a href="dsa/index.html" class="topic-card feat">
+        <div class="tc-ico">🧩</div>
+        <h3>Data Structures & Algorithms</h3>
+        <p>Arrays, trees, graphs, DP — with Java code, complexity analysis, and step-by-step dry runs.</p>
+        <div class="tc-ft">
+          <div style="display:flex;gap:5px"><span class="tag tag-i">Active</span><span class="tag tag-d">3 notes</span></div>
+          <span class="tc-arr">→</span>
+        </div>
+      </a>
+      <a href="system-design/index.html" class="topic-card">
+        <div class="tc-ico" style="background:rgba(96,165,250,0.08);border-color:rgba(96,165,250,0.2);">🏗️</div>
+        <h3>System Design</h3>
+        <p>HLD, LLD, scalability, caching — real-world system walkthroughs from first principles.</p>
+        <div class="tc-ft">
+          <div style="display:flex;gap:5px"><span class="tag tag-b">Coming</span></div>
+          <span class="tc-arr">→</span>
+        </div>
+      </a>
+      <a href="genai/index.html" class="topic-card">
+        <div class="tc-ico" style="background:rgba(192,132,252,0.08);border-color:rgba(192,132,252,0.2);">🤖</div>
+        <h3>Generative AI</h3>
+        <p>LLMs, transformers, RAG, fine-tuning — AI engineering for working developers.</p>
+        <div class="tc-ft">
+          <div style="display:flex;gap:5px"><span class="tag tag-d">Planned</span></div>
+          <span class="tc-arr">→</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="sec-row">
+      <div class="sec-lbl">Recently Added</div>
+      <a href="dsa/index.html" class="sec-link">View all →</a>
+    </div>
+    <ul class="recent-list">
+      <li class="recent-item">
+        <div class="r-dot"></div>
+        <a href="dsa/arrays/problems/noble-integer.html">Noble Integer — count elements where count(less) == value</a>
+        <div class="r-tags"><span class="tag tag-i">Arrays</span><span class="tag tag-a">Medium</span></div>
+      </li>
+      <li class="recent-item">
+        <div class="r-dot"></div>
+        <a href="dsa/arrays/problems/min-cost-removal.html">Min Cost of Removing All Elements</a>
+        <div class="r-tags"><span class="tag tag-i">Arrays</span><span class="tag tag-a">Medium</span></div>
+      </li>
+      <li class="recent-item">
+        <div class="r-dot"></div>
+        <a href="dsa/arrays/sorting.html">Custom Comparator & Comparable in Java</a>
+        <div class="r-tags"><span class="tag tag-i">Sorting</span></div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+</div>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
