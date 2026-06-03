@@ -1,0 +1,22 @@
+/* Shared styles for all LeetCode 150 section overview pages */
+.prob-table { border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-top:16px }
+.prob-row {
+  display:grid;grid-template-columns:44px 1fr auto auto;
+  align-items:center;gap:10px;padding:11px 16px;
+  border-bottom:1px solid var(--border);transition:background .1s;
+}
+.prob-row:last-child { border-bottom:none }
+.prob-row:hover { background:var(--bg2) }
+.prob-num { font-size:11px;font-weight:600;color:var(--text4);font-family:'JetBrains Mono',monospace;text-align:right }
+.prob-name { font-size:13px;font-weight:500;color:var(--text);text-decoration:none }
+.prob-name:hover { color:var(--indigo) }
+.prob-name.soon { color:var(--text3);pointer-events:none }
+.diff { font-size:10px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:99px;white-space:nowrap }
+.diff-e { background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd) }
+.diff-m { background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd) }
+.diff-h { background:var(--red-bg);color:var(--red);border:1px solid rgba(220,38,38,.2) }
+.prob-status { font-size:10px;font-weight:600;color:var(--text5);font-family:'JetBrains Mono',monospace }
+@media(max-width:680px){
+  .prob-row { grid-template-columns:32px 1fr auto;gap:6px;padding:9px 12px }
+  .prob-status { display:none }
+}

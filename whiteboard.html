@@ -113,7 +113,16 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 }
 .wb-toast.show{opacity:1}
 
-#wb-canvas.erasing{cursor:cell}
+#wb-canvas.erasing  { cursor:cell }
+#wb-canvas.selecting{ cursor:crosshair }
+#wb-canvas.moving   { cursor:move }
+
+/* Selection overlay sits on top of the canvas, never intercepts pointer events */
+#wb-sel-overlay{
+  position:absolute;top:0;left:0;
+  pointer-events:none;z-index:3;
+  display:block;
+}
 
 /* ── ruler overlay ── */
 #wb-ruler-overlay{
@@ -272,7 +281,9 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 <!-- Scrollable shell — canvas lives inside this -->
 <div class="wb-shell" id="wb-shell">
   <canvas id="wb-canvas"></canvas>
-  <!-- Ruler overlay: sits above canvas, pointer-events:none so drawing still works -->
+  <!-- Selection overlay: transparent canvas for rubber-band + dashed border; never blocks input -->
+  <canvas id="wb-sel-overlay"></canvas>
+  <!-- Ruler overlay -->
   <div id="wb-ruler-overlay"></div>
 </div>
 
@@ -290,6 +301,13 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5">
       <path d="M13 4l-7 8H3l-.5-2 7-8 3.5 2z"/>
       <line x1="2" y1="13" x2="14" y2="13"/>
+    </svg>
+  </button>
+  <button class="wbt" id="tool-select" title="Select &amp; Move  [S]">
+    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="2" y="2" width="8" height="8" rx="1" stroke-dasharray="3 2"/>
+      <polyline points="10,10 14,14"/>
+      <polyline points="11,14 14,14 14,11"/>
     </svg>
   </button>
 
@@ -405,9 +423,11 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 <script src="assets/js/main.js"></script>
 <script>
 (function(){
-  const canvas  = document.getElementById('wb-canvas');
-  const ctx     = canvas.getContext('2d');
-  const shell   = document.getElementById('wb-shell');
+  const canvas    = document.getElementById('wb-canvas');
+  const ctx       = canvas.getContext('2d');
+  const selCanvas = document.getElementById('wb-sel-overlay');
+  const selCtx    = selCanvas.getContext('2d');
+  const shell     = document.getElementById('wb-shell');
   const stEl    = document.getElementById('wb-st');
   const toastEl  = document.getElementById('wb-toast');
   const barEl    = document.getElementById('wb-bar');
@@ -442,6 +462,106 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
   let saveTimer, toastTimer;
   let isMinimized = false;
   let rulerOn = false;
+
+  /* ── selection state ── */
+  const sel = {
+    phase:      'none',   // 'none' | 'drawing' | 'ready' | 'moving'
+    sx: 0, sy: 0,         // rubber-band origin
+    rect:       null,     // {x,y,w,h} finalised selection box
+    offscreen:  null,     // HTMLCanvasElement holding the lifted pixels
+    liftedData: null,     // ImageData of main canvas after the lift
+    posX: 0, posY: 0,    // current draw-position of offscreen
+    dragOX: 0, dragOY: 0 // mouse offset within sel rect when moving
+  };
+
+  /* ── selection helpers ── */
+  function clearSelOverlay(){ selCtx.clearRect(0, 0, W, CANVAS_H); }
+
+  function drawRubberBand(rx, ry, rw, rh){
+    clearSelOverlay();
+    selCtx.save();
+    selCtx.fillStyle = 'rgba(99,102,241,0.08)';
+    selCtx.fillRect(rx, ry, rw, rh);
+    selCtx.strokeStyle = '#6366f1';
+    selCtx.lineWidth   = 1.5;
+    selCtx.setLineDash([6, 4]);
+    selCtx.strokeRect(rx + 0.5, ry + 0.5, rw - 1, rh - 1);
+    selCtx.restore();
+  }
+
+  function drawSelBorder(x, y, w, h){
+    clearSelOverlay();
+    selCtx.save();
+    /* dashed border */
+    selCtx.strokeStyle = '#6366f1';
+    selCtx.lineWidth   = 1.5;
+    selCtx.setLineDash([6, 4]);
+    selCtx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+    /* 8 handles */
+    selCtx.fillStyle   = '#ffffff';
+    selCtx.strokeStyle = '#6366f1';
+    selCtx.lineWidth   = 1.5;
+    selCtx.setLineDash([]);
+    [
+      [x,     y    ],[x+w/2, y    ],[x+w,   y    ],
+      [x,     y+h/2],               [x+w,   y+h/2],
+      [x,     y+h  ],[x+w/2, y+h  ],[x+w,   y+h  ],
+    ].forEach(([cx, cy]) => {
+      selCtx.fillRect(cx - 4, cy - 4, 8, 8);
+      selCtx.strokeRect(cx - 4, cy - 4, 8, 8);
+    });
+    selCtx.restore();
+  }
+
+  function liftSelection(){
+    const {x, y, w, h} = sel.rect;
+    const off = document.createElement('canvas');
+    off.width = w; off.height = h;
+    off.getContext('2d').putImageData(ctx.getImageData(x, y, w, h), 0, 0);
+    sel.offscreen = off;
+    sel.posX = x; sel.posY = y;
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(x, y, w, h);
+    sel.liftedData = ctx.getImageData(0, 0, W, CANVAS_H);
+  }
+
+  function drawSelAtPos(nx, ny){
+    nx = Math.max(0, Math.min(W  - sel.rect.w, nx));
+    ny = Math.max(0, Math.min(CANVAS_H - sel.rect.h, ny));
+    ctx.putImageData(sel.liftedData, 0, 0);
+    ctx.drawImage(sel.offscreen, nx, ny);
+    sel.posX = nx; sel.posY = ny;
+    drawSelBorder(nx, ny, sel.rect.w, sel.rect.h);
+  }
+
+  function commitSel(){
+    if (sel.offscreen && sel.phase !== 'none'){
+      snapshot();
+      ctx.putImageData(sel.liftedData, 0, 0);
+      ctx.drawImage(sel.offscreen, sel.posX, sel.posY);
+      scheduleSave();
+    }
+    sel.phase = 'none'; sel.rect = null;
+    sel.offscreen = null; sel.liftedData = null;
+    clearSelOverlay();
+  }
+
+  function cancelSel(){
+    if (sel.liftedData && sel.offscreen){
+      ctx.putImageData(sel.liftedData, 0, 0);
+      /* put pixels back at original position */
+      ctx.drawImage(sel.offscreen, sel.rect.x, sel.rect.y);
+    }
+    sel.phase = 'none'; sel.rect = null;
+    sel.offscreen = null; sel.liftedData = null;
+    clearSelOverlay();
+  }
+
+  function isInSel(x, y){
+    if (!sel.rect || sel.phase !== 'ready') return false;
+    return x >= sel.posX && x <= sel.posX + sel.rect.w &&
+           y >= sel.posY && y <= sel.posY + sel.rect.h;
+  }
 
   /* restore saved bg */
   const savedBG = localStorage.getItem(LS_BG_KEY);
@@ -523,10 +643,12 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
   }
 
   function setTool(t){
+    if (tool === 'select' && t !== 'select' && sel.phase !== 'none') commitSel();
     tool = t;
     document.getElementById('tool-pen').classList.toggle('on', t === 'pen');
     document.getElementById('tool-eraser').classList.toggle('on', t === 'eraser');
-    canvas.className = t === 'eraser' ? 'erasing' : '';
+    document.getElementById('tool-select').classList.toggle('on', t === 'select');
+    canvas.className = t === 'eraser' ? 'erasing' : t === 'select' ? 'selecting' : '';
   }
 
   function strokeColor(){ return tool === 'eraser' ? bgColor : color; }
@@ -542,8 +664,9 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
   });
 
   /* ── toolbar actions ── */
-  document.getElementById('tool-pen').addEventListener('click', () => setTool('pen'));
+  document.getElementById('tool-pen').addEventListener('click',    () => setTool('pen'));
   document.getElementById('tool-eraser').addEventListener('click', () => setTool('eraser'));
+  document.getElementById('tool-select').addEventListener('click', () => setTool('select'));
   document.getElementById('wb-undo').addEventListener('click', undo);
   document.getElementById('wb-redo').addEventListener('click', redo);
   document.getElementById('wb-clear').addEventListener('click', clearAll);
@@ -609,11 +732,13 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
     if(!e.ctrlKey && !e.metaKey){
       if(k==='p') setTool('pen');
       if(k==='e') setTool('eraser');
+      if(k==='s') setTool('select');
       if(k==='[') cycleSizeDown();
       if(k===']') cycleSizeUp();
       if(k==='f') toggleFullscreen();
       if(k==='m') isMinimized ? restore() : minimize();
       if(k==='r') toggleRuler();
+      if(k==='escape' && sel.phase !== 'none'){ cancelSel(); toast('Selection cancelled'); }
     }
     if((e.ctrlKey||e.metaKey) && k==='z'){ e.preventDefault(); undo(); }
     if((e.ctrlKey||e.metaKey) && (k==='y'||(e.shiftKey&&k==='z'))){ e.preventDefault(); redo(); }
@@ -643,10 +768,38 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
   function startDraw(e){
     if(e.touches && e.touches.length > 1) return;
     e.preventDefault();
+    const {x,y} = getXY(e);
+
+    /* ── select tool ── */
+    if(tool === 'select'){
+      if(sel.phase === 'ready' && isInSel(x, y)){
+        /* click INSIDE  → start dragging */
+        sel.phase  = 'moving';
+        sel.dragOX = x - sel.posX;
+        sel.dragOY = y - sel.posY;
+        canvas.className = 'moving';
+      } else if(sel.phase === 'ready'){
+        /* click OUTSIDE ready selection → PLACE it, then start a new selection */
+        commitSel();
+        sel.phase = 'drawing';
+        sel.sx = x; sel.sy = y;
+        sel.rect = {x, y, w:0, h:0};
+      } else {
+        /* no active selection → start fresh */
+        sel.phase = 'drawing';
+        sel.sx = x; sel.sy = y;
+        sel.rect = {x, y, w:0, h:0};
+      }
+      drawing = true;
+      return;
+    }
+
+    /* cancel any open selection when drawing */
+    if(sel.phase !== 'none') cancelSel();
+
     snapshot();
     redoStack = [];
     drawing = true;
-    const {x,y} = getXY(e);
     ctx.beginPath();
     ctx.arc(x, y, Math.max(1, strokeSize()/2), 0, Math.PI*2);
     ctx.fillStyle = strokeColor();
@@ -660,6 +813,19 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
     if(e.touches && e.touches.length > 1) return;
     e.preventDefault();
     const {x,y} = getXY(e);
+
+    if(tool === 'select'){
+      if(sel.phase === 'drawing'){
+        const rx = Math.min(sel.sx, x), ry = Math.min(sel.sy, y);
+        const rw = Math.abs(x - sel.sx), rh = Math.abs(y - sel.sy);
+        sel.rect = {x:rx, y:ry, w:rw, h:rh};
+        drawRubberBand(rx, ry, rw, rh);
+      } else if(sel.phase === 'moving'){
+        drawSelAtPos(Math.round(x - sel.dragOX), Math.round(y - sel.dragOY));
+      }
+      return;
+    }
+
     ctx.lineTo(x, y);
     ctx.strokeStyle = strokeColor();
     ctx.lineWidth   = strokeSize();
@@ -673,8 +839,37 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
   function endDraw(){
     if(!drawing) return;
     drawing = false;
+
+    if(tool === 'select'){
+      if(sel.phase === 'drawing'){
+        clearSelOverlay();
+        if(sel.rect && sel.rect.w > 8 && sel.rect.h > 8){
+          liftSelection();
+          sel.phase = 'ready';
+          drawSelBorder(sel.posX, sel.posY, sel.rect.w, sel.rect.h);
+          toast('Drag the selection to move it  •  click outside to place');
+        } else {
+          sel.phase = 'none'; sel.rect = null;
+        }
+      } else if(sel.phase === 'moving'){
+        sel.phase = 'ready';
+        canvas.className = 'selecting';
+        drawSelBorder(sel.posX, sel.posY, sel.rect.w, sel.rect.h);
+      }
+      return;
+    }
+
     scheduleSave();
   }
+
+  /* cursor hint when hovering over selection */
+  canvas.addEventListener('mousemove', e => {
+    if(tool !== 'select' || drawing) return;
+    if(sel.phase === 'ready'){
+      const {x,y} = getXY(e);
+      canvas.className = isInSel(x, y) ? 'moving' : 'selecting';
+    }
+  });
 
   /* ── undo / redo ── */
   function snapshot(){
@@ -761,8 +956,11 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
     if(newW === W) return;
     const prev = W > 0 ? canvas.toDataURL() : null;
     W = newW;
-    canvas.width  = W;
-    canvas.height = CANVAS_H;
+    canvas.width      = W;
+    canvas.height     = CANVAS_H;
+    selCanvas.width   = W;
+    selCanvas.height  = CANVAS_H;
+    if(sel.phase !== 'none') cancelSel();
     undoStack = []; redoStack = [];
     paintBG();
     if(prev){
@@ -776,10 +974,154 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
   canvas.addEventListener('mousedown',  startDraw);
   canvas.addEventListener('mousemove',  moveDraw);
   canvas.addEventListener('mouseup',    endDraw);
-  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('mouseleave', e => {
+    /* only stop drawing for pen/eraser; selection continues until mouseup */
+    if(tool !== 'select') endDraw();
+  });
   canvas.addEventListener('touchstart', startDraw, {passive:false});
   canvas.addEventListener('touchmove',  moveDraw,  {passive:false});
   canvas.addEventListener('touchend',   endDraw);
+
+  /* release anywhere in the window ends the drag gracefully */
+  window.addEventListener('mouseup',    () => { if(drawing) endDraw(); });
+  window.addEventListener('touchend',   () => { if(drawing) endDraw(); });
+  window.addEventListener('touchcancel',() => { if(drawing) endDraw(); });
+
+  /* track mouse position outside canvas for smooth selection drag */
+  window.addEventListener('mousemove', e => {
+    if(!drawing || tool !== 'select' || sel.phase !== 'moving') return;
+    const r = canvas.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    drawSelAtPos(Math.round(x - sel.dragOX), Math.round(y - sel.dragOY));
+  });
+
+  /* ════════════════════════════════════════════
+     PASTE FROM CLIPBOARD
+     Priority: image → text/plain → text/html
+     (Google / web pages send text/html)
+     Fallback: navigator.clipboard.readText()
+  ════════════════════════════════════════════ */
+
+  /* ── paste helpers ── */
+
+  /* auto-pick ink colour visible against current bg */
+  function pasteInkColor(){
+    const h = bgColor.replace('#','');
+    const r = parseInt(h.slice(0,2),16),
+          g = parseInt(h.slice(2,4),16),
+          b = parseInt(h.slice(4,6),16);
+    return (r*299 + g*587 + b*114)/1000 > 128 ? '#1a1a2e' : '#f8fafc';
+  }
+
+  /* HTML → plain text, preserving paragraph breaks */
+  function htmlToText(html){
+    const d = document.createElement('div');
+    d.innerHTML = html;
+    d.querySelectorAll('p,div,li,h1,h2,h3,h4,h5,h6,br,tr').forEach(el =>
+      el.before(document.createTextNode('\n'))
+    );
+    return (d.innerText || d.textContent || '')
+      .replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();
+  }
+
+  /* draw image centred in current viewport */
+  function pasteImage(blob){
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      snapshot(); redoStack = [];
+      const viewY = shell.scrollTop, viewH = shell.clientHeight;
+      let iw = img.naturalWidth||img.width, ih = img.naturalHeight||img.height;
+      const sc = Math.min(1,(W*0.85)/iw,(viewH*0.8)/ih);
+      iw=Math.round(iw*sc); ih=Math.round(ih*sc);
+      ctx.drawImage(img, Math.round((W-iw)/2), Math.round(viewY+(viewH-ih)/2), iw, ih);
+      URL.revokeObjectURL(url);
+      scheduleSave(); toast('Image pasted ✓');
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); toast('Could not read image'); };
+    img.src = url;
+  }
+
+  /* word-wrap text onto canvas using a colour that's always visible */
+  function pasteText(raw){
+    const text = raw.replace(/\r/g,'').trim();
+    if(!text) return;
+    snapshot(); redoStack = [];
+
+    const PAD=80, FS=15, LH=22, maxW=W-PAD-20;
+    let y = shell.scrollTop + 28;
+
+    ctx.save();
+    ctx.font=`500 ${FS}px 'Plus Jakarta Sans',sans-serif`;
+    ctx.fillStyle    = pasteInkColor();   /* always visible on any bg */
+    ctx.textBaseline = 'top';
+
+    const lines=[];
+    text.split('\n').forEach(para=>{
+      if(!para.trim()){lines.push('');return;}
+      let line='';
+      para.split(' ').forEach(word=>{
+        const t=line?line+' '+word:word;
+        if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=word;}
+        else line=t;
+      });
+      if(line) lines.push(line);
+    });
+    lines.forEach(l=>{ctx.fillText(l,PAD,y);y+=LH;});
+    ctx.restore();
+    scheduleSave();
+    toast(`Pasted ${lines.length} line${lines.length!==1?'s':''} ✓`);
+  }
+
+  /* promise wrapper so we can await getAsString */
+  function readItem(item){ return new Promise(res=>item.getAsString(res)); }
+
+  /* ── main paste listener ── */
+  document.addEventListener('paste', async e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+    e.preventDefault();
+
+    const items = e.clipboardData ? Array.from(e.clipboardData.items) : [];
+
+    /* 1 — binary image */
+    const imgItem = items.find(it=>it.type.startsWith('image/'));
+    if(imgItem){const b=imgItem.getAsFile();if(b){pasteImage(b);return;}}
+
+    /* 2 — plain text AND html fetched in parallel */
+    const plainItem = items.find(it=>it.type==='text/plain');
+    const htmlItem  = items.find(it=>it.type==='text/html');
+
+    const [plainStr, htmlStr] = await Promise.all([
+      plainItem ? readItem(plainItem) : Promise.resolve(''),
+      htmlItem  ? readItem(htmlItem)  : Promise.resolve(''),
+    ]);
+
+    /* prefer plain if non-empty; Google often sends empty plain + full html */
+    const plain = plainStr.trim();
+    const html  = htmlStr  ? htmlToText(htmlStr) : '';
+    const best  = plain || html;
+
+    if(best){ pasteText(best); return; }
+
+    /* 3 — async Clipboard API fallback */
+    try{
+      const ci = await navigator.clipboard.read();
+      for(const item of ci){
+        const imgT = item.types.find(t=>t.startsWith('image/'));
+        if(imgT){pasteImage(await item.getType(imgT));return;}
+      }
+      const txt = await navigator.clipboard.readText();
+      if(txt.trim()){pasteText(txt);return;}
+    }catch{
+      try{
+        const txt=await navigator.clipboard.readText();
+        if(txt.trim()){pasteText(txt);return;}
+      }catch{/*blocked*/}
+    }
+
+    toast('Nothing to paste — copy text or an image first');
+  });
 
   /* ── init ── */
   window.addEventListener('resize', resize);

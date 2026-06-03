@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>1D Dynamic Programming — LeetCode 150 · Code with Vakeel</title>
+<link rel="stylesheet" href="../../../assets/css/style.css"/>
+<link rel="stylesheet" href="../section.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="../../../index.html" class="nav-logo"><div class="logo-mark"><svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.5"><polyline points="2,10 5,5 8,8 11,3"/><circle cx="11" cy="3" r="1.2" fill="white" stroke="none"/></svg></div><div class="logo-text"><div class="logo-name"><em>code</em> with Vakeel</div><div class="logo-tag">dev notes</div></div></a>
+  <div class="nav-div"></div>
+  <div class="nav-links">
+    <a href="../../../index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5L8 2l6 4.5V14H2V6.5z"/><rect x="6" y="10" width="4" height="4"/></svg>Home<div class="dot"></div></a>
+    <a href="../../../dsa/index.html" class="nav-link active"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="4" height="9"/><rect x="6" y="2" width="4" height="12"/><rect x="11" y="7" width="4" height="7"/></svg>DSA<div class="dot"></div></a>
+    <a href="../../../system-design/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="4" rx="1"/><rect x="1" y="10" width="6" height="4" rx="1"/><rect x="9" y="10" width="6" height="4" rx="1"/><line x1="4" y1="6" x2="4" y2="10"/><line x1="12" y1="6" x2="12" y2="10"/><line x1="4" y1="8" x2="12" y2="8"/></svg>System Design<div class="dot"></div></a>
+    <a href="../../../genai/index.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="2" r="1.2"/><circle cx="8" cy="14" r="1.2"/><circle cx="2" cy="8" r="1.2"/><circle cx="14" cy="8" r="1.2"/></svg>Gen AI<div class="dot"></div></a>
+    <a href="../../../contact.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><polyline points="1,4 8,9.5 15,4"/></svg>Contact<div class="dot"></div></a>
+    <a href="../../../whiteboard.html" class="nav-link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="1.5"/><line x1="1" y1="12" x2="15" y2="12"/><line x1="5" y1="12" x2="5" y2="14.5"/><line x1="11" y1="12" x2="11" y2="14.5"/></svg>Whiteboard<div class="dot"></div></a>
+  </div>
+  <button class="theme-btn" title="Switch to dark">🌙</button>
+</nav>
+<div class="app">
+<aside class="sidebar">
+  <div class="sg"><div class="sg-head">Arrays &amp; Strings <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../array-string/" class="si "><span class="si-ico">▦</span>Array / String<span class="si-badge">24</span></a></li>
+    <li><a href="../two-pointers/" class="si "><span class="si-ico">▦</span>Two Pointers<span class="si-badge">5</span></a></li>
+    <li><a href="../sliding-window/" class="si "><span class="si-ico">▦</span>Sliding Window<span class="si-badge">4</span></a></li>
+    <li><a href="../matrix/" class="si "><span class="si-ico">▦</span>Matrix<span class="si-badge">5</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Hashing <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../hashmap/" class="si "><span class="si-ico">▦</span>Hashmap<span class="si-badge">9</span></a></li>
+    <li><a href="../intervals/" class="si "><span class="si-ico">▦</span>Intervals<span class="si-badge">4</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Stack &amp; Lists <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../stack/" class="si "><span class="si-ico">▦</span>Stack<span class="si-badge">5</span></a></li>
+    <li><a href="../linked-list/" class="si "><span class="si-ico">▦</span>Linked List<span class="si-badge">11</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Trees <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../binary-tree-general/" class="si "><span class="si-ico">▦</span>BT General<span class="si-badge">14</span></a></li>
+    <li><a href="../binary-tree-bfs/" class="si "><span class="si-ico">▦</span>BT BFS<span class="si-badge">4</span></a></li>
+    <li><a href="../binary-search-tree/" class="si "><span class="si-ico">▦</span>BST<span class="si-badge">3</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Graphs <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../graph-general/" class="si "><span class="si-ico">▦</span>Graph General<span class="si-badge">6</span></a></li>
+    <li><a href="../graph-bfs/" class="si "><span class="si-ico">▦</span>Graph BFS<span class="si-badge">3</span></a></li>
+    <li><a href="../trie/" class="si "><span class="si-ico">▦</span>Trie<span class="si-badge">3</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Backtracking <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../backtracking/" class="si "><span class="si-ico">▦</span>Backtracking<span class="si-badge">7</span></a></li>
+    <li><a href="../divide-conquer/" class="si "><span class="si-ico">▦</span>Divide &amp; Conquer<span class="si-badge">4</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Searching <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../kadane/" class="si "><span class="si-ico">▦</span>Kadane's<span class="si-badge">2</span></a></li>
+    <li><a href="../binary-search/" class="si "><span class="si-ico">▦</span>Binary Search<span class="si-badge">7</span></a></li>
+    <li><a href="../heap/" class="si "><span class="si-ico">▦</span>Heap<span class="si-badge">4</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Math &amp; Bits <span class="sg-arr">›</span></div><ul class="sg-items ">
+    <li><a href="../bit-manipulation/" class="si "><span class="si-ico">▦</span>Bit Manipulation<span class="si-badge">6</span></a></li>
+    <li><a href="../math/" class="si "><span class="si-ico">▦</span>Math<span class="si-badge">6</span></a></li>
+  </ul></div>
+  <div class="sg"><div class="sg-head">Dynamic Programming <span class="sg-arr">›</span></div><ul class="sg-items open">
+    <li><a href="../dp-1d/" class="si active"><span class="si-ico">▦</span>1D DP<span class="si-badge">5</span></a></li>
+    <li><a href="../dp-multi/" class="si "><span class="si-ico">▦</span>Multidimensional DP<span class="si-badge">9</span></a></li>
+  </ul></div>
+
+</aside>
+<div class="main"><div class="content">
+  <div class="pg-head">
+    <div class="breadcrumb"><a href="../../../index.html">Home</a><span>›</span><a href="../../../dsa/index.html">DSA</a><span>›</span><a href="../">LeetCode 150</a><span>›</span><span>1D Dynamic Programming</span></div>
+    <div class="pg-meta"><span class="tag tag-i">LeetCode 150</span><span class="tag tag-d">5 Problems</span></div>
+    <h1 class="pg-title">🧠 1D Dynamic Programming</h1>
+    <p class="pg-desc">5 problems &nbsp;·&nbsp; <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--green-bg);color:var(--green)">1E</span> <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--amber-bg);color:var(--amber)">4M</span> <br>Solution pages are added as each problem is taught. Problem names become clickable links once the solution page is live.</p>
+  </div>
+
+  <div class="prob-table">
+      <div class="prob-row"><span class="prob-num">137</span><span class="prob-name soon">Climbing Stairs</span><span class="diff diff-e">Easy</span><span class="prob-status">Soon</span></div>
+      <div class="prob-row"><span class="prob-num">138</span><span class="prob-name soon">House Robber</span><span class="diff diff-m">Medium</span><span class="prob-status">Soon</span></div>
+      <div class="prob-row"><span class="prob-num">139</span><span class="prob-name soon">Word Break</span><span class="diff diff-m">Medium</span><span class="prob-status">Soon</span></div>
+      <div class="prob-row"><span class="prob-num">140</span><span class="prob-name soon">Coin Change</span><span class="diff diff-m">Medium</span><span class="prob-status">Soon</span></div>
+      <div class="prob-row"><span class="prob-num">141</span><span class="prob-name soon">Longest Increasing Subsequence</span><span class="diff diff-m">Medium</span><span class="prob-status">Soon</span></div>
+  </div>
+
+</div></div>
+</div>
+<script src="../../../assets/js/main.js"></script>
+</body>
+</html>

@@ -22,6 +22,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   updateThemeBtn(document.documentElement.getAttribute('data-theme') || 'light');
 
+  /* ── DSA dropdown submenu (injected on every page) ── */
+  const dsaLink = Array.from(document.querySelectorAll('.nav-link'))
+    .find(a => a.textContent.trim().startsWith('DSA'));
+
+  if (dsaLink) {
+    /* derive leet-150 href from the DSA href (works at any folder depth) */
+    const dsaHref     = dsaLink.getAttribute('href');           // e.g. "dsa/index.html"
+    const leet150Href = dsaHref.replace('index.html', 'leet-150/index.html');
+
+    /* wrap the link in a relative-positioned container */
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-link-wrap';
+    dsaLink.parentNode.insertBefore(wrap, dsaLink);
+    wrap.appendChild(dsaLink);
+
+    /* build the dropdown */
+    const dd = document.createElement('div');
+    dd.className = 'nav-dropdown';
+    dd.innerHTML = `
+      <div class="nav-dd-label">Series</div>
+      <a href="${leet150Href}" class="nav-dd-item">
+        <span>⚡</span> LeetCode 150
+        <span class="nav-dd-badge">NEW</span>
+      </a>
+      <!-- future series rows go here:
+      <div class="nav-dd-sep"></div>
+      <a href="..." class="nav-dd-item soon">🏢 Top 50 MANG</a>
+      -->
+    `;
+    wrap.appendChild(dd);
+  }
+
   /* ── Mobile hamburger menu (injected on every page) ── */
   const nav      = document.querySelector('.nav');
   const navLinks = nav && nav.querySelector('.nav-links');
