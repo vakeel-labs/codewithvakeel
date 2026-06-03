@@ -726,7 +726,7 @@ tbody tr:hover td { background:var(--bg2) }
 @media(max-width:1200px) { .toc{display:none} .content{padding-right:38px} }
 @media(max-width:900px) {
   .hero { grid-template-columns:1fr }
-  .hero-r { height:340px;border-left:none;border-top:1px solid var(--border) }
+  .hero-r { height:320px;border-left:none;border-top:1px solid var(--border) }
   .hero-l { padding:40px 28px }
   .topic-grid { grid-template-columns:1fr 1fr }
 }
@@ -762,8 +762,40 @@ tbody tr:hover td { background:var(--bg2) }
   .sidebar { transform:translateX(-100%);transition:transform 0.2s;width:240px }
   .sidebar.open { transform:translateX(0) }
   .content { padding:22px 20px 80px }
-  .home-body { padding:28px 20px }
+
+  /* ── Home page ── */
+  .home-body { padding:24px 16px 40px }
   .topic-grid { grid-template-columns:1fr }
+
+  /* Hero */
+  .hero { min-height:auto }
+  .hero-l { padding:28px 18px 20px }
+  .hero-h1 { font-size:28px;margin-bottom:12px }
+  .hero-p  { font-size:13px;margin-bottom:18px;max-width:100% }
+  .hero-r  { height:200px }
+
+  /* Hero buttons — DSA+SystemDesign on row 1, WhatsApp full-width row 2 */
+  .hero-btns { gap:8px;margin-bottom:20px;flex-wrap:wrap }
+  .btn-p,.btn-g { padding:9px 14px;font-size:12.5px }
+  .btn-wa { width:100%;justify-content:center;padding:11px 14px;font-size:13px }
+
+  /* Stats — tighter */
+  .hero-stats { gap:16px }
+  .stat-n  { font-size:17px }
+  .stat-l  { font-size:10.5px }
+
+  /* Topic cards */
+  .topic-card { padding:16px }
+  .topic-card h3 { font-size:13px }
+  .topic-card p  { font-size:11.5px }
+
+  /* Section rows */
+  .sec-row { margin-top:4px }
+
+  /* Recent list — hide tags on very narrow screens */
+  .recent-item { gap:8px;padding:9px 0 }
+  .recent-item a { font-size:12.5px }
+  .r-tags { display:none }
 
   /* ── hide horizontal nav links & divider ── */
   .nav-div  { display:none }
@@ -818,4 +850,17 @@ tbody tr:hover td { background:var(--bg2) }
     border-color:var(--indigo-bd);
     color:var(--indigo);
   }
+}
+
+/* ━━━━ VERY SMALL PHONES  ≤ 380px ━━━━━━━━━━━━━━━ */
+@media(max-width:380px) {
+  .hero-h1   { font-size:24px }
+  .hero-l    { padding:22px 14px 16px }
+  .home-body { padding:18px 14px 36px }
+  .btn-p,.btn-g { font-size:12px;padding:9px 12px }
+  .btn-wa    { font-size:12px }
+  .hero-stats { gap:10px }
+  .stat-n    { font-size:15px }
+  .hero-r    { height:160px }
+  .topic-card{ padding:14px }
 }
