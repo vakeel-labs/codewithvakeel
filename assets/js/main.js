@@ -27,10 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
     .find(a => a.textContent.trim().startsWith('DSA'));
 
   if (dsaLink) {
-    /* Use dsaLink.href (browser-resolved absolute URL) so it works at any folder depth.
-       Replace the trailing "index.html" with "leet-150/index.html". */
-    const dsaAbsHref  = dsaLink.href;   // fully-resolved: e.g. "file:///…/dsa/index.html"
-    const leet150Href = dsaAbsHref.replace(/index\.html([?#].*)?$/, 'leet-150/index.html');
+    /* The logo link always points to the root index.html — use it to get the
+       site root URL reliably from any page depth, then build the leet-150 path. */
+    const logoLink    = document.querySelector('.nav-logo');
+    const rootUrl     = logoLink
+      ? logoLink.href.replace(/index\.html([?#].*)?$/, '')   // strip index.html → root/
+      : dsaLink.href.replace(/dsa\/index\.html([?#].*)?$/, '');
+    const leet150Href = rootUrl + 'dsa/leet-150/index.html';
 
     /* wrap the link in a relative-positioned container */
     const wrap = document.createElement('div');
