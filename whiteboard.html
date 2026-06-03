@@ -5,41 +5,42 @@
 <title>Whiteboard — Code with Vakeel</title>
 <link rel="stylesheet" href="assets/css/style.css"/>
 <style>
-/* Page itself must NOT scroll — only the canvas shell scrolls */
+/* ═══════════════════════════════════════════
+   BASE — applies to all screen sizes
+═══════════════════════════════════════════ */
 html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 
-/* ── shell: this is the scrollable viewport ── */
 .wb-shell{
   position:fixed;inset:0;top:var(--nav-h);
   overflow-y:scroll;overflow-x:hidden;
 }
-
-/* Canvas is tall enough to scroll */
 #wb-canvas{display:block;touch-action:none;cursor:crosshair;width:100%}
 
-/* ── ALL toolbars are position:fixed so they stay on screen while you scroll ── */
+/* ── LEFT vertical toolbar (desktop default) ── */
 .wb-bar{
   position:fixed;left:16px;top:50%;transform:translateY(-50%);
   background:var(--card);border:1px solid var(--bdr);border-radius:14px;
   padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;
   box-shadow:0 4px 24px rgba(0,0,0,0.14);z-index:100;user-select:none;
-  transition:opacity .2s,transform .2s
+  transition:opacity .25s,transform .25s
 }
-.wb-bar.hidden{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(-60px)}
+.wb-bar.hidden{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(-70px)}
 
 .wbt{
   width:36px;height:36px;border:none;background:transparent;border-radius:9px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;color:var(--fg);transition:background .14s
+  cursor:pointer;color:var(--fg);transition:background .14s;flex-shrink:0
 }
 .wbt:hover{background:var(--hover)}
 .wbt.on{background:rgba(99,102,241,0.16);color:#6366f1}
 .wbt.del:hover{background:rgba(248,113,113,0.15);color:#f87171}
 .wbt.fs:hover{background:rgba(52,211,153,0.15);color:#34d399}
-.wb-sep{width:22px;height:1px;background:var(--bdr);margin:3px 0}
-.wb-lbl{font:9px 'JetBrains Mono',monospace;color:var(--fg2);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.wbt.ruler-on{background:rgba(99,102,241,0.16);color:#6366f1}
 
-/* ink colour dots */
+.wb-sep{width:22px;height:1px;background:var(--bdr);margin:3px 0}
+.wb-lbl{font:9px 'JetBrains Mono',monospace;color:var(--fg2);
+        letter-spacing:.06em;text-transform:uppercase;margin-top:2px;flex-shrink:0}
+
 .wbd{
   width:22px;height:22px;border-radius:50%;border:2.5px solid transparent;
   cursor:pointer;transition:transform .14s,border-color .14s;flex-shrink:0
@@ -47,7 +48,6 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 .wbd:hover{transform:scale(1.2)}
 .wbd.on{border-color:var(--fg)}
 
-/* BG colour squares */
 .wbg{
   width:20px;height:20px;border-radius:5px;border:2px solid transparent;
   cursor:pointer;transition:transform .14s,border-color .14s;flex-shrink:0
@@ -61,9 +61,9 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
   background:var(--card);border:1px solid var(--bdr);border-radius:10px;
   padding:6px 14px;display:flex;align-items:center;gap:8px;
   box-shadow:0 4px 16px rgba(0,0,0,0.1);z-index:100;white-space:nowrap;user-select:none;
-  transition:opacity .2s,transform .2s
+  transition:opacity .25s,transform .25s
 }
-.wb-top.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(-50px)}
+.wb-top.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(-60px)}
 
 .wbs{
   width:30px;height:30px;border:1.5px solid var(--bdr);border-radius:7px;
@@ -76,7 +76,7 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 .wb-vd{width:1px;height:20px;background:var(--bdr)}
 .wb-st{font:11px 'JetBrains Mono',monospace;color:var(--fg2)}
 
-/* ── window buttons top-right ── */
+/* ── window buttons (top-right) ── */
 .wb-win-btns{
   position:fixed;top:calc(var(--nav-h) + 14px);right:16px;z-index:100;
   display:flex;gap:6px;align-items:center
@@ -89,12 +89,11 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 }
 .wb-wbtn:hover{background:var(--hover)}
 .wb-wbtn.restore{
-  position:fixed;top:calc(var(--nav-h) + 14px);right:16px;z-index:110;
-  display:none
+  position:fixed;top:calc(var(--nav-h) + 14px);right:16px;z-index:110;display:none
 }
 .wb-wbtn.restore.show{display:flex}
 
-/* ── scroll-to-top button (appears after scrolling down) ── */
+/* ── scroll-to-top ── */
 #wb-totop{
   position:fixed;bottom:60px;right:16px;z-index:100;
   width:34px;height:34px;border:1px solid var(--bdr);border-radius:9px;
@@ -114,18 +113,115 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
 }
 .wb-toast.show{opacity:1}
 
-/* cursor when erasing */
 #wb-canvas.erasing{cursor:cell}
 
 /* ── ruler overlay ── */
 #wb-ruler-overlay{
-  position:absolute;top:0;left:0;
-  width:100%;height:4000px;
-  pointer-events:none;        /* never blocks drawing */
-  display:none;z-index:2;
+  position:absolute;top:0;left:0;width:100%;height:4000px;
+  pointer-events:none;display:none;z-index:2
 }
-#wb-ruler-overlay.on{ display:block }
-.wbt.ruler-on{background:rgba(99,102,241,0.16);color:#6366f1}
+#wb-ruler-overlay.on{display:block}
+
+
+/* ═══════════════════════════════════════════
+   MOBILE  ≤ 680px
+   Toolbar moves to BOTTOM as a horizontal bar
+═══════════════════════════════════════════ */
+@media (max-width:680px){
+
+  /* Hide nav links — whiteboard uses full screen on mobile */
+  .nav-links,.nav-div{ display:none !important }
+
+  /* Canvas shell leaves room for the bottom toolbar */
+  .wb-shell{ bottom:68px }
+
+  /* ── BOTTOM horizontal toolbar ── */
+  .wb-bar{
+    left:0 !important; right:0 !important;
+    bottom:0 !important; top:auto !important;
+    transform:none !important;
+    width:100% !important;
+    flex-direction:row !important;
+    border-radius:18px 18px 0 0 !important;
+    border:none !important;
+    border-top:1px solid var(--bdr) !important;
+    padding:10px 16px !important;
+    padding-bottom:max(10px,env(safe-area-inset-bottom)) !important;
+    gap:6px !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+  }
+  .wb-bar::-webkit-scrollbar{ display:none }
+
+  /* Slide down to hide on mobile */
+  .wb-bar.hidden{
+    transform:translateY(110%) !important;
+    opacity:1 !important;
+    pointer-events:none !important;
+  }
+
+  /* Colour rows go horizontal */
+  #wb-colors,#wb-bg-colors{
+    flex-direction:row !important;
+    gap:6px !important;
+  }
+
+  /* Hide labels (INK / BG) — no space */
+  .wb-lbl{ display:none !important }
+
+  /* Separators become vertical */
+  .wb-sep{
+    width:1px !important; height:28px !important;
+    margin:0 4px !important;
+  }
+
+  /* Bigger touch targets — 44px minimum */
+  .wbt{ width:44px !important; height:44px !important }
+  .wbd{ width:30px !important; height:30px !important }
+  .wbg{ width:28px !important; height:28px !important; border-radius:7px !important }
+
+  /* ── top size bar — compact, centered, avoid overlap ── */
+  .wb-top{
+    top:calc(var(--nav-h) + 8px) !important;
+    padding:5px 10px !important;
+    gap:5px !important;
+    /* stay left of the window buttons */
+    left:8px !important;
+    transform:none !important;
+    right:auto !important;
+  }
+  .wb-top.hidden{
+    transform:translateY(-60px) !important;
+  }
+
+  /* Hide status text and divider on mobile — no room */
+  .wb-st,.wb-vd{ display:none !important }
+
+  .wbs{ width:38px !important; height:38px !important }
+
+  /* ── window buttons ── */
+  .wb-win-btns{
+    top:calc(var(--nav-h) + 8px) !important;
+    right:8px !important;
+    gap:5px !important;
+  }
+  .wb-wbtn{ width:38px !important; height:38px !important }
+
+  /* Restore button top-right on mobile too */
+  .wb-wbtn.restore{
+    top:calc(var(--nav-h) + 8px) !important;
+    right:8px !important;
+  }
+
+  /* Toast above the bottom toolbar */
+  .wb-toast{ bottom:80px !important }
+
+  /* Scroll-to-top above the bottom toolbar */
+  #wb-totop{ bottom:80px !important; right:12px !important }
+}
 </style>
 </head>
 <body>
@@ -464,6 +560,9 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
     totopBtn.classList.toggle('show', shell.scrollTop > 200);
   });
 
+  /* ── detect mobile ── */
+  function isMobile(){ return window.innerWidth <= 680; }
+
   /* ── minimize / restore toolbar ── */
   function minimize(){
     isMinimized = true;
@@ -471,7 +570,9 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
     topEl.classList.add('hidden');
     winBtns.style.display = 'none';
     restBtn.classList.add('show');
-    toast('Toolbar hidden — click to restore  [M]');
+    /* on mobile, shell can use full height when bar is hidden */
+    if(isMobile()) shell.style.bottom = '0';
+    toast('Toolbar hidden — tap ⊡ to restore');
   }
   function restore(){
     isMinimized = false;
@@ -479,6 +580,7 @@ html,body{height:100%;overflow:hidden !important;overscroll-behavior:none}
     topEl.classList.remove('hidden');
     winBtns.style.display = 'flex';
     restBtn.classList.remove('show');
+    if(isMobile()) shell.style.bottom = '68px';
   }
 
   /* ── fullscreen ── */
