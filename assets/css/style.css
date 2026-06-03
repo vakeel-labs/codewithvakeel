@@ -608,6 +608,9 @@ tbody tr:hover td { background:var(--bg2) }
   font-size:13px;color:var(--green);
 }
 
+/* ━━━━ HAMBURGER — hidden on desktop ━━━━━━━━━━━━ */
+.nav-ham { display:none }
+
 /* ━━━━ RESPONSIVE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 @media(max-width:1200px) { .toc{display:none} .content{padding-right:38px} }
 @media(max-width:900px) {
@@ -617,9 +620,31 @@ tbody tr:hover td { background:var(--bg2) }
   .topic-grid { grid-template-columns:1fr 1fr }
 }
 @media(max-width:700px) {
-  .contact-body { grid-template-columns:1fr }
-  .contact-wrap { padding:40px 20px 80px }
-  .form-row { grid-template-columns:1fr }
+  /* ── layout ── */
+  .contact-body        { grid-template-columns:1fr; gap:20px }
+  .contact-wrap        { padding:28px 16px 60px }
+
+  /* ── header text ── */
+  .contact-title       { font-size:26px }
+  .contact-sub         { font-size:13.5px; margin-bottom:24px; max-width:100% }
+
+  /* ── info cards ── */
+  .contact-card        { padding:11px 14px; gap:12px }
+  .contact-ico         { width:30px; height:30px }
+  .contact-card-val    { font-size:12px }
+
+  /* ── form box ── */
+  .contact-form-box    { padding:20px 16px 18px }
+  .form-row            { grid-template-columns:1fr }
+
+  /* ── footer row: stack note above full-width button ── */
+  .form-footer {
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+  .form-note           { text-align:center }
+  .form-footer .btn-p  { width:100%; justify-content:center; padding:11px 16px; font-size:13.5px }
 }
 @media(max-width:680px) {
   :root { --sb-w:0px }
@@ -628,4 +653,58 @@ tbody tr:hover td { background:var(--bg2) }
   .content { padding:22px 20px 80px }
   .home-body { padding:28px 20px }
   .topic-grid { grid-template-columns:1fr }
+
+  /* ── hide horizontal nav links & divider ── */
+  .nav-div  { display:none }
+  .nav-links {
+    /* removed from flex row; becomes a slide-down panel */
+    display:none;
+    position:fixed;
+    top:var(--nav-h);left:0;right:0;
+    background:var(--bg1);
+    border-bottom:1px solid var(--border);
+    flex-direction:column;
+    padding:10px 14px 16px;
+    gap:4px;
+    z-index:998;
+    box-shadow:0 8px 28px rgba(0,0,0,0.13);
+    margin-left:0;
+  }
+  .nav-links.mobile-open {
+    display:flex;
+    animation:navSlideDown .18s ease;
+  }
+  @keyframes navSlideDown {
+    from { opacity:0; transform:translateY(-10px) }
+    to   { opacity:1; transform:translateY(0) }
+  }
+  .nav-links .nav-link {
+    padding:11px 14px;
+    border-radius:10px;
+    font-size:14px;
+    width:100%;
+    justify-content:flex-start;
+    gap:10px;
+  }
+  .nav-links .nav-link svg { width:15px;height:15px }
+
+  /* ── hamburger button ── */
+  .nav-ham {
+    display:flex;
+    align-items:center;justify-content:center;
+    width:34px;height:34px;
+    border-radius:8px;
+    background:var(--bg2);
+    border:1px solid var(--border2);
+    cursor:pointer;
+    margin-left:auto;   /* push to right */
+    color:var(--text3);
+    flex-shrink:0;
+    transition:all var(--t);
+  }
+  .nav-ham.open {
+    background:var(--indigo-bg);
+    border-color:var(--indigo-bd);
+    color:var(--indigo);
+  }
 }

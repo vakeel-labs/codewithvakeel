@@ -22,6 +22,51 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   updateThemeBtn(document.documentElement.getAttribute('data-theme') || 'light');
 
+  /* ── Mobile hamburger menu (injected on every page) ── */
+  const nav      = document.querySelector('.nav');
+  const navLinks = nav && nav.querySelector('.nav-links');
+  if (nav && navLinks) {
+    const HAM_ICON  = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/></svg>`;
+    const CLOSE_ICON= `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>`;
+
+    const ham = document.createElement('button');
+    ham.className   = 'nav-ham';
+    ham.setAttribute('aria-label', 'Open menu');
+    ham.innerHTML   = HAM_ICON;
+
+    /* insert just before the theme button */
+    const themeBtn = nav.querySelector('.theme-btn');
+    nav.insertBefore(ham, themeBtn || null);
+
+    function closeMenu() {
+      navLinks.classList.remove('mobile-open');
+      ham.classList.remove('open');
+      ham.innerHTML = HAM_ICON;
+      ham.setAttribute('aria-label', 'Open menu');
+    }
+    function openMenu() {
+      navLinks.classList.add('mobile-open');
+      ham.classList.add('open');
+      ham.innerHTML = CLOSE_ICON;
+      ham.setAttribute('aria-label', 'Close menu');
+    }
+
+    ham.addEventListener('click', e => {
+      e.stopPropagation();
+      navLinks.classList.contains('mobile-open') ? closeMenu() : openMenu();
+    });
+
+    /* close on any nav-link tap */
+    navLinks.querySelectorAll('.nav-link').forEach(a =>
+      a.addEventListener('click', closeMenu)
+    );
+
+    /* close when tapping outside the nav */
+    document.addEventListener('click', e => {
+      if (!nav.contains(e.target)) closeMenu();
+    });
+  }
+
   document.querySelectorAll('.sg-head').forEach(h => {
     h.addEventListener('click', () => {
       const items = h.nextElementSibling, arr = h.querySelector('.sg-arr');
