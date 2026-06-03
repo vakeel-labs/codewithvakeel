@@ -27,9 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .find(a => a.textContent.trim().startsWith('DSA'));
 
   if (dsaLink) {
-    /* derive leet-150 href from the DSA href (works at any folder depth) */
-    const dsaHref     = dsaLink.getAttribute('href');           // e.g. "dsa/index.html"
-    const leet150Href = dsaHref.replace('index.html', 'leet-150/index.html');
+    /* Use dsaLink.href (browser-resolved absolute URL) so it works at any folder depth.
+       Replace the trailing "index.html" with "leet-150/index.html". */
+    const dsaAbsHref  = dsaLink.href;   // fully-resolved: e.g. "file:///…/dsa/index.html"
+    const leet150Href = dsaAbsHref.replace(/index\.html([?#].*)?$/, 'leet-150/index.html');
 
     /* wrap the link in a relative-positioned container */
     const wrap = document.createElement('div');
